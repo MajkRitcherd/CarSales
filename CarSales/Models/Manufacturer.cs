@@ -18,5 +18,15 @@ namespace CarSales.Models
         /// Gets list of sold vehicles.
         /// </summary>
         public VehicleList Vehicles { get; private set; } = [];
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Shows only vechile count to not overwhelm the string with each vehicle data.
+        /// </remarks>
+        public override string ToString()
+        {
+            return $"Manufacturer name '{Name}', " +
+                $"Vehicle count '{Vehicles.Count}'";
+        }
     }
 }
