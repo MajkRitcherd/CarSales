@@ -22,12 +22,6 @@ namespace CarSales.Models
         public double GrossPrice => NetPrice * (1 + (VatPercent / 100));
 
         /// <summary>
-        /// Gets or sets ID of a vehicle.
-        /// </summary>
-        [XmlAttribute("Id")]
-        public int Id { get; init; }
-
-        /// <summary>
         /// Gets or sets the name of vehicle model.
         /// </summary>
         [XmlElement("Model")]

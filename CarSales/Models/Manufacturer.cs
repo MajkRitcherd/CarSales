@@ -9,12 +9,6 @@ namespace CarSales.Models
     public class Manufacturer
     {
         /// <summary>
-        /// Gets or sets manufacturer's ID.
-        /// </summary>
-        [XmlAttribute("Id")]
-        public int Id { get; init; }
-
-        /// <summary>
         /// Gets or sets manufacturer's name.
         /// </summary>
         [XmlElement("Name")]
