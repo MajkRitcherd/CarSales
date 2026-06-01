@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CarSales.Views"
         mc:Ignorable="d"
-        Title="Správa prodejů autosalonu" Height="650" Width="900">
+        Title="Správa prodejů autosalonu" Height="720" Width="1280">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -112,20 +112,26 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Nové auto:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                <WrapPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="Nové auto:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,5"/>
 
-                    <TextBlock Text="Značka:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBox Width="100" Margin="0,0,15,0" Padding="3"/>
+                    <TextBlock Text="Značka:" VerticalAlignment="Center" Margin="0,0,5,5"/>
+                    <TextBox x:Name="TxtNewManufacturer" Width="100" Margin="0,0,15,5" Padding="3"/>
 
-                    <TextBlock Text="Model:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBox Width="100" Margin="0,0,15,0" Padding="3"/>
+                    <TextBlock Text="Model:" VerticalAlignment="Center" Margin="0,0,5,5"/>
+                    <TextBox x:Name="TxtNewModel" Width="100" Margin="0,0,15,5" Padding="3"/>
 
-                    <TextBlock Text="Cena bez DPH:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBox Width="90" Margin="0,0,15,0" Padding="3"/>
-                </StackPanel>
+                    <TextBlock Text="Cena bez DPH:" VerticalAlignment="Center" Margin="0,0,5,5"/>
+                    <TextBox x:Name="TxtNewNetPrice" Width="90" Margin="0,0,15,5" Padding="3" PreviewTextInput="TxtNumeric_PreviewTextInput" DataObject.Pasting="Txtnumeric_Pasting"/>
 
-                <Button Grid.Column="1" Content="Přidat do evidence" Padding="15,6" Background="#6C757D" Foreground="White" BorderThickness="0" FontWeight="SemiBold"/>
+                    <TextBlock Text="DPH (%):" VerticalAlignment="Center" Margin="0,0,5,5"/>
+                    <TextBox x:Name="TxtNewVatPercent" Width="50" Margin="0,0,15,5" Padding="3"  PreviewTextInput="TxtNumeric_PreviewTextInput" DataObject.Pasting="Txtnumeric_Pasting"/>
+
+                    <TextBlock Text="Datum prodeje:" VerticalAlignment="Center" Margin="0,0,5,5"/>
+                    <DatePicker x:Name="DpNewSoldOn" Width="110" Margin="0,0,15,5" Padding="1"/>
+                </WrapPanel>
+
+                <Button Grid.Column="1" Content="Přidat do evidence" Padding="15,6" Background="#6C757D" Foreground="White" BorderThickness="0" FontWeight="SemiBold" Click="BtnClick_AddVehicleRecord"/>
             </Grid>
         </Border>
     </Grid>

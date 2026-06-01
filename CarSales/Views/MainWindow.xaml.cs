@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using CarSales.Models;
 using CarSales.Services;
 using CarSales.ViewModels;
@@ -20,6 +22,12 @@ namespace CarSales.Views
         [ObservableProperty]
         private double _averageNetPrice;
 
+        [ObservableProperty]
+        private Visibility _isCsvConverterVisible = Visibility.Hidden;
+
+        [ObservableProperty]
+        private string _openedFilePath = "Žádný soubor není načten";
+
         private SalesData? _salesData;
 
         [ObservableProperty]
@@ -27,12 +35,6 @@ namespace CarSales.Views
 
         [ObservableProperty]
         private int _totalVehiclesCount;
-
-        [ObservableProperty]
-        private Visibility _isCsvConverterVisible = Visibility.Hidden;
-
-        [ObservableProperty]
-        private string _openedFilePath = "Žádný soubor není načten";
 
         public MainWindow()
         {
@@ -51,6 +53,50 @@ namespace CarSales.Views
         /// </summary>
         public ObservableCollection<WeekendVehicleRowSummaryViewModel> WeekendVehicleRowSummaryViewModels { get; } = [];
 
+        [GeneratedRegex("[^0-9.,]+")]
+        private static partial Regex DoubleNumericRegex();
+
+        /// <summary>
+        /// Adds vehicle record to table.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event args.</param>
+        /// <exception cref="ArgumentException">Thrown if parsing fails.</exception>
+        private void BtnClick_AddVehicleRecord(object sender, RoutedEventArgs e)
+        {
+            if (!double.TryParse(TxtNewNetPrice.Text, out var netPrice))
+                throw new ArgumentException($"Failed to parse Net price '{TxtNewNetPrice.Text}' to double.");
+
+            if (!double.TryParse(TxtNewVatPercent.Text, out var vatPercent))
+                throw new ArgumentException($"Failed to parse Vat percent '{TxtNewVatPercent.Text}' to double.");
+
+            var vehicle = new Vehicle()
+            {
+                ModelName = TxtNewModel.Text,
+                NetPrice = netPrice,
+                VatPercent = vatPercent,
+                SoldOn = DpNewSoldOn.SelectedDate,
+            };
+
+            var manufacturer = _salesData?.Manufacturers
+                .FirstOrDefault(m => m.Name.Equals(TxtNewManufacturer.Text, StringComparison.OrdinalIgnoreCase));
+
+            if (manufacturer == null)
+            {
+                manufacturer = new Manufacturer() { Name = TxtNewManufacturer.Text };
+                _salesData?.Manufacturers.Add(manufacturer);
+            }
+
+            manufacturer.Vehicles.Add(vehicle);
+
+            UpdateView();
+        }
+
+        /// <summary>
+        /// Loads sales data from file.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event args.</param>
         private void BtnClick_LoadSalesData(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -70,10 +116,14 @@ namespace CarSales.Views
                 ? Visibility.Visible
                 : Visibility.Hidden;
 
-            UpdateGridData();
-            RecalculateStatistics();
+            UpdateView();
         }
 
+        /// <summary>
+        /// Recalculates statistics on tab selection change.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event args.</param>
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Ignore other selection than TabControl
@@ -114,6 +164,35 @@ namespace CarSales.Views
         }
 
         /// <summary>
+        /// Validates textbox for numeric values on CTRL+V.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event args.</param>
+        private void Txtnumeric_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(DataFormats.Text))
+            {
+                var text = (string)e.DataObject.GetData(DataFormats.Text);
+                if (DoubleNumericRegex().IsMatch(text))
+                    e.CancelCommand();
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        /// <summary>
+        /// Validates textbox for numeric values.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event args.</param>
+        private void TxtNumeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = DoubleNumericRegex().IsMatch(e.Text);
+        }
+
+        /// <summary>
         /// Updates grid data.
         /// </summary>
         private void UpdateGridData()
@@ -150,6 +229,15 @@ namespace CarSales.Views
             {
                 WeekendVehicleRowSummaryViewModels.Add(weekendSummary);
             }
+        }
+
+        /// <summary>
+        /// Updates a view.
+        /// </summary>
+        private void UpdateView()
+        {
+            UpdateGridData();
+            RecalculateStatistics();
         }
     }
 }
