@@ -4,16 +4,27 @@ using CarSales.Models;
 
 namespace CarSales.Services
 {
+    /// <summary>
+    /// Service to handle work with Files.
+    /// </summary>
     internal class FileService
     {
         private readonly string[] _allowedExtensions = [".xml", ".csv"];
         private readonly XmlSerializer _xmlSerializer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileService"/> class.
+        /// </summary>
         public FileService()
         {
             _xmlSerializer = new XmlSerializer(typeof(SalesData));
         }
 
+        /// <summary>
+        /// Loads sales data.
+        /// </summary>
+        /// <param name="xmlOrCsvFilePath">File path to sales data (.xml or .csv file).</param>
+        /// <returns>Sales data.</returns>
         public SalesData LoadSalesData(string xmlOrCsvFilePath)
         {
             ValidateSalesDataFile(xmlOrCsvFilePath);
@@ -29,6 +40,11 @@ namespace CarSales.Services
             }
         }
 
+        /// <summary>
+        /// Gets file extensions.
+        /// </summary>
+        /// <param name="filePath">File path.</param>
+        /// <returns>File extension.</returns>
         private static string GetFileExtension(string filePath) => Path.GetExtension(filePath).ToLowerInvariant();
 
         /// <summary>
