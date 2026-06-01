@@ -23,9 +23,6 @@ namespace CarSales.Views
         private double _averageNetPrice;
 
         [ObservableProperty]
-        private Visibility _isCsvConverterVisible = Visibility.Hidden;
-
-        [ObservableProperty]
         private string _openedFilePath = "Žádný soubor není načten";
 
         private SalesData? _salesData;
@@ -64,11 +61,20 @@ namespace CarSales.Views
         /// <exception cref="ArgumentException">Thrown if parsing fails.</exception>
         private void BtnClick_AddVehicleRecord(object sender, RoutedEventArgs e)
         {
-            if (!double.TryParse(TxtNewNetPrice.Text, out var netPrice))
-                throw new ArgumentException($"Failed to parse Net price '{TxtNewNetPrice.Text}' to double.");
+            double netPrice = 0d, vatPercent = 0d;
+            try
+            {
+                if (!double.TryParse(TxtNewNetPrice.Text, out netPrice))
+                    throw new ArgumentException($"Failed to parse Net price '{TxtNewNetPrice.Text}' to double.");
 
-            if (!double.TryParse(TxtNewVatPercent.Text, out var vatPercent))
-                throw new ArgumentException($"Failed to parse Vat percent '{TxtNewVatPercent.Text}' to double.");
+                if (!double.TryParse(TxtNewVatPercent.Text, out vatPercent))
+                    throw new ArgumentException($"Failed to parse Vat percent '{TxtNewVatPercent.Text}' to double.");
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, "Exception thrown", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             var vehicle = new Vehicle()
             {
@@ -110,13 +116,65 @@ namespace CarSales.Views
                 return;
 
             var selectedFilePath = openFileDialog.FileName;
-            _salesData = _fileService.LoadSalesData(selectedFilePath);
+            try
+            {
+                _salesData = _fileService.LoadSalesData(selectedFilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Exception thrown", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             OpenedFilePath = selectedFilePath;
-            IsCsvConverterVisible = string.Equals(FileService.GetFileExtension(selectedFilePath), ".csv")
-                ? Visibility.Visible
-                : Visibility.Hidden;
 
             UpdateView();
+        }
+
+        /// <summary>
+        /// Saves sales data to file.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">Event args.</param>
+        private void BtnClick_SaveSalesData(object sender, RoutedEventArgs e)
+        {
+            if (_salesData == null || !_salesData.Manufacturers.Any())
+            {
+                MessageBox.Show("No data to be saved", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "XML file (*.xml)|*.xml|CSV file (*.csv)|*.csv",
+                Title = "Save sales data",
+                FileName = "SalesData_Export"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var filePath = saveFileDialog.FileName;
+
+                    _fileService.SaveSalesData(filePath, _salesData);
+
+                    var messageBoxMessage = "Data were sucessfully saved to {0} file";
+                    if (string.Equals(FileService.GetFileExtension(filePath), ".xml", StringComparison.OrdinalIgnoreCase))
+                    {
+                        messageBoxMessage = string.Format(messageBoxMessage, "XML");
+                    }
+                    else
+                    {
+                        messageBoxMessage = string.Format(messageBoxMessage, "CSV");
+                    }
+
+                    MessageBox.Show(messageBoxMessage, "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Exception thrown", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         /// <summary>
@@ -212,17 +270,17 @@ namespace CarSales.Views
             }
 
             var weekendSummaryModels = VehicleRowViewModels
-                        .Where(x => x.Vehicle.SoldOn.HasValue
-                                    && (x.Vehicle.SoldOn.Value.DayOfWeek == DayOfWeek.Saturday || x.Vehicle.SoldOn.Value.DayOfWeek == DayOfWeek.Sunday))
-                        .GroupBy(x => new { x.ManufacturerName, x.Vehicle.ModelName })
-                        .Select(group => new WeekendVehicleRowSummaryViewModel()
-                        {
-                            VehicleManufacturerName = group.Key.ManufacturerName,
-                            VehicleModelName = group.Key.ModelName,
-                            TotalVehiclesSold = group.Count(),
-                            TotalNetPrice = group.Sum(x => x.Vehicle.NetPrice),
-                            TotalGrossPrice = group.Sum(x => x.Vehicle.GrossPrice),
-                        });
+                .Where(x => x.Vehicle.SoldOn.HasValue
+                         && (x.Vehicle.SoldOn.Value.DayOfWeek == DayOfWeek.Saturday || x.Vehicle.SoldOn.Value.DayOfWeek == DayOfWeek.Sunday))
+                .GroupBy(x => new { x.ManufacturerName, x.Vehicle.ModelName })
+                .Select(group => new WeekendVehicleRowSummaryViewModel()
+                {
+                    VehicleManufacturerName = group.Key.ManufacturerName,
+                    VehicleModelName = group.Key.ModelName,
+                    TotalVehiclesSold = group.Count(),
+                    TotalNetPrice = group.Sum(x => x.Vehicle.NetPrice),
+                    TotalGrossPrice = group.Sum(x => x.Vehicle.GrossPrice),
+                });
 
             WeekendVehicleRowSummaryViewModels.Clear();
             foreach (var weekendSummary in weekendSummaryModels)

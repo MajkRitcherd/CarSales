@@ -10,9 +10,10 @@ namespace CarSales.Services
     /// <summary>
     /// Service to handle work with Files.
     /// </summary>
-    internal class FileService
+    public class FileService
     {
-        private readonly string[] _allowedExtensions = [".xml", ".csv"];
+        private readonly string _supportedCsvDelimiter = ",";
+        private readonly string[] _supportedFileExtensions = [".xml", ".csv"];
         private readonly XmlSerializer _xmlSerializer;
 
         /// <summary>
@@ -40,14 +41,30 @@ namespace CarSales.Services
             ValidateSalesDataFile(xmlOrCsvFilePath);
 
             var extension = GetFileExtension(xmlOrCsvFilePath);
-            if (extension == _allowedExtensions[0])
-            {
+            if (extension == _supportedFileExtensions[0])
                 return LoadSalesDataFromXml(xmlOrCsvFilePath);
-            }
-            else
-            {
+            else if (extension == _supportedFileExtensions[1])
                 return LoadSalesDataFromCsv(xmlOrCsvFilePath);
-            }
+            else
+                throw new NotImplementedException($"Loading from file with extension '{extension}' is not supported.");
+        }
+
+        /// <summary>
+        /// Saves sales data.
+        /// </summary>
+        /// <param name="xmlOrCsvFilePath">File path to sales data (.xml or .csv file).</param>
+        /// <param name="salesData">Sales data.</param>
+        public void SaveSalesData(string xmlOrCsvFilePath, SalesData salesData)
+        {
+            ValidateFileExtensions(xmlOrCsvFilePath, _supportedFileExtensions);
+
+            var extension = GetFileExtension(xmlOrCsvFilePath);
+            if (extension == _supportedFileExtensions[0])
+                SaveSalesDataToXml(xmlOrCsvFilePath, salesData);
+            else if (extension == _supportedFileExtensions[1])
+                SaveSalesDataToCsv(xmlOrCsvFilePath, salesData);
+            else
+                throw new NotImplementedException($"Saving with file extension '{extension}' is not supported.");
         }
 
         /// <summary>
@@ -64,7 +81,6 @@ namespace CarSales.Services
                 {
                     salesData.Manufacturers.Add(new Manufacturer()
                     {
-                        Id = salesData.Manufacturers.Count + 1,
                         Name = dto.Manufacturer,
                     });
                 }
@@ -72,7 +88,6 @@ namespace CarSales.Services
                 var manufacturer = salesData.Manufacturers.First(m => m.Name == dto.Manufacturer);
                 manufacturer.Vehicles.Add(new Vehicle()
                 {
-                    Id = manufacturer.Vehicles.Count + 1,
                     ModelName = dto.Model,
                     NetPrice = dto.NetPrice,
                     VatPercent = dto.VatPercent,
@@ -92,15 +107,20 @@ namespace CarSales.Services
         {
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                Delimiter = ",",
+                Delimiter = _supportedCsvDelimiter,
                 PrepareHeaderForMatch = args => args.Header.ToLower().Trim(),
             };
 
             List<CsvSalesDataRowDto> list;
-            using (var reader = new StreamReader(csvFilePath))
-            using (var csv = new CsvReader(reader, config))
+            try
             {
+                using var reader = new StreamReader(csvFilePath);
+                using var csv = new CsvReader(reader, config);
                 list = [.. csv.GetRecords<CsvSalesDataRowDto>()];
+            }
+            catch (Exception ex)
+            {
+                throw new FileServiceException($"Failed to load sales data from CSV '{csvFilePath}'.", ex);
             }
 
             return ConvertCsvDTOsToSalesData(list);
@@ -122,28 +142,96 @@ namespace CarSales.Services
 
                 return salesData;
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to deserialize file '{xmlFilePath}'. Validate the structure of XML file.", ex);
+                throw new FileServiceException($"Failed to load sales data from XML '{xmlFilePath}'.", ex);
             }
+        }
+
+        /// <summary>
+        /// Saves sales data to CSV file.
+        /// </summary>
+        /// <param name="csvFilePath">FilePath to a CSV file.</param>
+        /// <param name="salesData">Sales data.</param>
+        private void SaveSalesDataToCsv(string csvFilePath, SalesData salesData)
+        {
+            var csvRows = salesData.Manufacturers
+                .SelectMany(m => m.Vehicles.Select(v => new CsvSalesDataRowDto()
+                {
+                    Manufacturer = m.Name,
+                    Model = v.ModelName,
+                    SoldOn = v.SoldOn,
+                    NetPrice = v.NetPrice,
+                    VatPercent = v.VatPercent,
+                }))
+                .ToList();
+
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = true,
+                Delimiter = _supportedCsvDelimiter,
+            };
+
+            try
+            {
+                using var writer = new StreamWriter(csvFilePath, false, System.Text.Encoding.UTF8);
+                using var csv = new CsvWriter(writer, config);
+
+                csv.WriteRecords(csvRows);
+            }
+            catch (Exception ex)
+            {
+                throw new FileServiceException($"Failed to save sales data to CSV file '{csvFilePath}'.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Saves sales data to XML file.
+        /// </summary>
+        /// <param name="xmlFilePath">FilePath to a XML file.</param>
+        /// <param name="salesData">Sales data.</param>
+        private void SaveSalesDataToXml(string xmlFilePath, SalesData salesData)
+        {
+            try
+            {
+                using var writer = new StreamWriter(xmlFilePath);
+                _xmlSerializer.Serialize(writer, salesData);
+            }
+            catch (Exception ex)
+            {
+                throw new FileServiceException($"Failed to save sales data to XML file '{xmlFilePath}'.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Validates whether or not a filepath has allowed extension.
+        /// </summary>
+        /// <param name="filePath">FilePath.</param>
+        /// <param name="allowedFileExtensions">Array of allowed file extensions.</param>
+        /// <exception cref="ArgumentException">Thrown when filePath has unsupported file extension.</exception>
+        private void ValidateFileExtensions(string filePath, string[] allowedFileExtensions)
+        {
+            var extension = GetFileExtension(filePath);
+            if (!allowedFileExtensions.Contains(extension))
+                throw new ArgumentException($"File extensions '{extension}' is not suppoerted. Supported file extensions: '{string.Join(", ", _supportedFileExtensions)}'");
         }
 
         /// <summary>
         /// Validate sales data file whether it exists, have required file extension, ...
         /// </summary>
         /// <param name="xmlOrCsvFilePath">XML or CSV path to file.</param>
-        /// <exception cref="ArgumentException">Thrown when file extension is not one of <see cref="_allowedExtensions"/>.</exception>
         /// <exception cref="FileNotFoundException">Thrown when file does not exists.</exception>
         private void ValidateSalesDataFile(string xmlOrCsvFilePath)
         {
-            // Check allowed file extensions
-            var extension = GetFileExtension(xmlOrCsvFilePath);
-            if (!_allowedExtensions.Contains(extension))
-                throw new ArgumentException($"File extensions '{extension}' is not suppoerted. Supported file extensions: '{string.Join(", ", _allowedExtensions)}'");
+            ValidateFileExtensions(xmlOrCsvFilePath, _supportedFileExtensions);
 
             // Check file existance
             if (!File.Exists(xmlOrCsvFilePath))
                 throw new FileNotFoundException($"File was not found. Path to file: '{xmlOrCsvFilePath}'");
+        }
+
+        public class FileServiceException(string? message, Exception? ex) : Exception(message, ex)
+        {
         }
 
         /// <summary>

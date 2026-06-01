@@ -17,7 +17,7 @@
         <DockPanel Grid.Row="0" LastChildFill="True" Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                 <Button Content="Načíst soubor (XML/CSV)" Padding="10,6" Margin="0,0,10,0" Background="#2196F3" Foreground="White" BorderThickness="0" Click="BtnClick_LoadSalesData"/>
-                <Button Content="Převést CSV na XML" Padding="10,6" Background="#4CAF50" Foreground="White" BorderThickness="0" Visibility="{Binding IsCsvConverterVisible}"/>
+                <Button Content="Uložit jako (XML/CSV) 💾" Padding="10,6" Background="#009688" Foreground="White" BorderThickness="0" Click="BtnClick_SaveSalesData"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="15,0,0,0">
@@ -26,13 +26,13 @@
             </StackPanel>
 
             <TextBlock Text="{Binding OpenedFilePath, StringFormat={}Otevřený soubor: {0}}" 
-                   VerticalAlignment="Center" 
-                   HorizontalAlignment="Left"
-                   Foreground="Gray" 
-                   FontStyle="Italic"
-                   Margin="10,0"
-                   TextTrimming="CharacterEllipsis"
-                   ToolTip="{Binding OpenedFilePath}"/>
+               VerticalAlignment="Center" 
+               HorizontalAlignment="Left"
+               Foreground="Gray" 
+               FontStyle="Italic"
+               Margin="10,0"
+               TextTrimming="CharacterEllipsis"
+               ToolTip="{Binding OpenedFilePath}"/>
         </DockPanel>
 
         <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,15">
@@ -59,12 +59,12 @@
         </UniformGrid>
 
         <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0,1,0,0" BorderBrush="#E0E0E0"
-                x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+            x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
 
             <TabItem Header="Všechna vozidla" Padding="15,6" FontWeight="SemiBold">
                 <DataGrid ItemsSource="{Binding VehicleRowViewModels}" 
-                  AutoGenerateColumns="False" CanUserAddRows="False" 
-                  Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
+              AutoGenerateColumns="False" CanUserAddRows="False" 
+              Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Značka" Binding="{Binding ManufacturerName}" Width="*"/>
                         <DataGridTextColumn Header="Model" Binding="{Binding Vehicle.ModelName}" Width="*"/>
@@ -78,8 +78,8 @@
 
             <TabItem Header="Víkendové prodeje 📅" Padding="15,6" FontWeight="SemiBold">
                 <DataGrid ItemsSource="{Binding WeekendVehicleRowSummaryViewModels}" 
-                  AutoGenerateColumns="False" CanUserAddRows="False" 
-                  Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
+              AutoGenerateColumns="False" CanUserAddRows="False" 
+              Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Značka" Binding="{Binding VehicleManufacturerName}" Width="*"/>
                         <DataGridTextColumn Header="Model" Binding="{Binding VehicleModelName}" Width="*"/>
