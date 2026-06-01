@@ -152,11 +152,30 @@ namespace CarSales.Services
         /// </summary>
         private sealed class CsvSalesDataRowDto
         {
-            public string Manufacturer { get; set; } = string.Empty;
-            public string Model { get; set; } = string.Empty;
-            public double NetPrice { get; set; }
-            public DateTime? SoldOn { get; set; }
-            public double VatPercent { get; set; }
+            /// <summary>
+            /// Gets manufacturer's name.
+            /// </summary>
+            public string Manufacturer { get; init; } = string.Empty;
+
+            /// <summary>
+            /// Gets model's name.
+            /// </summary>
+            public string Model { get; init; } = string.Empty;
+
+            /// <summary>
+            /// Gets net price.
+            /// </summary>
+            public double NetPrice { get; init; }
+
+            /// <summary>
+            /// Gets a date of sale (Can be NULL indicating that the vehicle was not yet sold).
+            /// </summary>
+            public DateTime? SoldOn { get; init; }
+
+            /// <summary>
+            /// Gets var percent.
+            /// </summary>
+            public double VatPercent { get; init; }
         }
     }
 }

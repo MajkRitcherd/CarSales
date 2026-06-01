@@ -14,6 +14,6 @@ namespace CarSales.Models
         /// Gets collection of manufacturers.
         /// </summary>
         [XmlElement("Manufacturer")]
-        public ObservableCollection<Manufacturer> Manufacturers { get; private set; } = [];
+        public ObservableCollection<Manufacturer> Manufacturers { get; init; } = [];
     }
 }

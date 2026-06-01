@@ -12,20 +12,20 @@ namespace CarSales.Models
         /// Gets or sets manufacturer's ID.
         /// </summary>
         [XmlAttribute("Id")]
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         /// <summary>
         /// Gets or sets manufacturer's name.
         /// </summary>
         [XmlElement("Name")]
-        public required string Name { get; set; }
+        public required string Name { get; init; }
 
         /// <summary>
         /// Gets list of sold vehicles.
         /// </summary>
         [XmlArray("Vehicles")]
         [XmlArrayItem("Vehicle")]
-        public VehicleList Vehicles { get; private set; } = [];
+        public VehicleList Vehicles { get; init; } = [];
 
         /// <inheritdoc/>
         /// <remarks>
