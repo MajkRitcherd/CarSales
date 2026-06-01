@@ -258,12 +258,25 @@ namespace CarSales.Views
             if (_salesData == null)
                 return;
 
+            var filter = TxtSearch.Text.Trim().ToLowerInvariant();
+
             VehicleRowViewModels.Clear();
             foreach (var manufacturer in _salesData.Manufacturers)
             {
                 foreach (var vehicle in manufacturer.Vehicles)
                 {
                     var row = new VehicleRowViewModel(manufacturer.Name, vehicle);
+
+                    if (!string.IsNullOrEmpty(filter))
+                    {
+                        bool matchesManufacturerName = manufacturer.Name.Contains(filter, StringComparison.InvariantCultureIgnoreCase);
+                        bool matchesModelName = vehicle.ModelName.Contains(filter, StringComparison.InvariantCultureIgnoreCase);
+
+                        if (!matchesManufacturerName && !matchesModelName)
+                        {
+                            continue;
+                        }
+                    }
 
                     VehicleRowViewModels.Add(row);
                 }
@@ -287,6 +300,11 @@ namespace CarSales.Views
             {
                 WeekendVehicleRowSummaryViewModels.Add(weekendSummary);
             }
+        }
+
+        private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateView();
         }
 
         /// <summary>
