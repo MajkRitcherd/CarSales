@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SalesData>
+    <Manufacturer Id="1">
+        <Name>Škoda</Name>
+        <Vehicles>
+            <Vehicle Id="1" >
+                <Model>Oktávia</Model>
+                <SoldOn>2010-12-02</SoldOn>
+                <NetPrice>500000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="2" >
+                <Model>Felicia</Model>
+                <SoldOn>2000-12-03</SoldOn>
+                <NetPrice>210000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="3" >
+                <Model>Fabia</Model>
+                <SoldOn>2010-12-04</SoldOn>
+                <NetPrice>350000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="4" >
+                <Model>Oktávia</Model>
+                <SoldOn>2010-12-04</SoldOn>
+                <NetPrice>500000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="5" >
+                <Model>Oktávia</Model>
+                <SoldOn>2010-12-05</SoldOn>
+                <NetPrice>500000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="6" >
+                <Model>Fabia</Model>
+                <SoldOn>2010-12-05</SoldOn>
+                <NetPrice>350000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="7" >
+                <Model>Fabia</Model>
+                <SoldOn>2010-12-06</SoldOn>
+                <NetPrice>350000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+            <Vehicle Id="8" >
+                <Model>Forman</Model>
+                <SoldOn>2000-12-04</SoldOn>
+                <NetPrice>100000</NetPrice>
+                <VatPercent>19</VatPercent>
+            </Vehicle>
+            <Vehicle Id="9" >
+                <Model>Favorit</Model>
+                <SoldOn>2000-12-05</SoldOn>
+                <NetPrice>80000</NetPrice>
+                <VatPercent>19</VatPercent>
+            </Vehicle>
+            <Vehicle Id="10" >
+                <Model>Forman</Model>
+                <SoldOn>2000-12-06</SoldOn>
+                <NetPrice>100000</NetPrice>
+                <VatPercent>19</VatPercent>
+            </Vehicle>
+            <Vehicle Id="1" >
+                <Model>Felicia</Model>
+                <SoldOn>2000-12-03</SoldOn>
+                <NetPrice>210000</NetPrice>
+                <VatPercent>19</VatPercent>
+            </Vehicle>
+            <Vehicle Id="1" >
+                <Model>Felicia</Model>
+                <SoldOn>2000-12-02</SoldOn>
+                <NetPrice>210000</NetPrice>
+                <VatPercent>19</VatPercent>
+            </Vehicle>
+            <Vehicle Id="1" >
+                <Model>Oktávia</Model>
+                <SoldOn>2010-12-07</SoldOn>
+                <NetPrice>500000</NetPrice>
+                <VatPercent>20</VatPercent>
+            </Vehicle>
+        </Vehicles>
+    </Manufacturer>
+</SalesData>
