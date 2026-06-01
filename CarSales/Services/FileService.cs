@@ -24,6 +24,13 @@ namespace CarSales.Services
         }
 
         /// <summary>
+        /// Gets file extensions.
+        /// </summary>
+        /// <param name="filePath">File path.</param>
+        /// <returns>File extension.</returns>
+        public static string GetFileExtension(string filePath) => Path.GetExtension(filePath).ToLowerInvariant();
+
+        /// <summary>
         /// Loads sales data.
         /// </summary>
         /// <param name="xmlOrCsvFilePath">File path to sales data (.xml or .csv file).</param>
@@ -42,13 +49,6 @@ namespace CarSales.Services
                 return LoadSalesDataFromCsv(xmlOrCsvFilePath);
             }
         }
-
-        /// <summary>
-        /// Gets file extensions.
-        /// </summary>
-        /// <param name="filePath">File path.</param>
-        /// <returns>File extension.</returns>
-        private static string GetFileExtension(string filePath) => Path.GetExtension(filePath).ToLowerInvariant();
 
         /// <summary>
         /// Converts CSV DTOs to Sales data.

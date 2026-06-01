@@ -14,16 +14,25 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
+        <DockPanel Grid.Row="0" LastChildFill="True" Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                 <Button Content="Načíst soubor (XML/CSV)" Padding="10,6" Margin="0,0,10,0" Background="#2196F3" Foreground="White" BorderThickness="0" Click="BtnClick_LoadSalesData"/>
-                <Button Content="Převést CSV na XML" Padding="10,6" Background="#4CAF50" Foreground="White" BorderThickness="0"/>
+                <Button Content="Převést CSV na XML" Padding="10,6" Background="#4CAF50" Foreground="White" BorderThickness="0" Visibility="{Binding IsCsvConverterVisible}"/>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="15,0,0,0">
                 <TextBlock Text="Hledat:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
                 <TextBox Width="200" Padding="5" VerticalAlignment="Center" Height="28"/>
             </StackPanel>
+
+            <TextBlock Text="{Binding OpenedFilePath, StringFormat={}Otevřený soubor: {0}}" 
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Left"
+                   Foreground="Gray" 
+                   FontStyle="Italic"
+                   Margin="10,0"
+                   TextTrimming="CharacterEllipsis"
+                   ToolTip="{Binding OpenedFilePath}"/>
         </DockPanel>
 
         <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,15">

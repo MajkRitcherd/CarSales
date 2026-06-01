@@ -28,6 +28,12 @@ namespace CarSales.Views
         [ObservableProperty]
         private int _totalVehiclesCount;
 
+        [ObservableProperty]
+        private Visibility _isCsvConverterVisible = Visibility.Hidden;
+
+        [ObservableProperty]
+        private string _openedFilePath = "Žádný soubor není načten";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -57,7 +63,12 @@ namespace CarSales.Views
             if (openFileDialog.ShowDialog() == false)
                 return;
 
-            _salesData = _fileService.LoadSalesData(openFileDialog.FileName);
+            var selectedFilePath = openFileDialog.FileName;
+            _salesData = _fileService.LoadSalesData(selectedFilePath);
+            OpenedFilePath = selectedFilePath;
+            IsCsvConverterVisible = string.Equals(FileService.GetFileExtension(selectedFilePath), ".csv")
+                ? Visibility.Visible
+                : Visibility.Hidden;
 
             UpdateGridData();
             RecalculateStatistics();
