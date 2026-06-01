@@ -13,6 +13,7 @@ namespace CarSales.Models
         /// <summary>
         /// Gets or sets a date of sale (Can be NULL indicating that the vehicle was not yet sold).
         /// </summary>
+        [XmlElement("SoldOn")]
         public DateTime? SoldOn { get; set; }
 
         /// <summary>
@@ -23,22 +24,25 @@ namespace CarSales.Models
         /// <summary>
         /// Gets or sets ID of a vehicle.
         /// </summary>
+        [XmlAttribute("Id")]
         public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of vehicle model.
         /// </summary>
-        [XmlAttribute("Model")]
+        [XmlElement("Model")]
         public required string ModelName { get; set; }
 
         /// <summary>
         /// Gets or sets Net price (Price excluding VAT).
         /// </summary>
+        [XmlElement("NetPrice")]
         public required double NetPrice { get; set; }
 
         /// <summary>
         /// Gets or sets VAT.
         /// </summary>
+        [XmlElement("VatPercent")]
         public required double VatPercent { get; set; }
 
         /// <inheritdoc/>

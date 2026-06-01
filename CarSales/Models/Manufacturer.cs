@@ -9,14 +9,22 @@ namespace CarSales.Models
     internal class Manufacturer
     {
         /// <summary>
+        /// Gets or sets manufacturer's ID.
+        /// </summary>
+        [XmlAttribute("Id")]
+        public int Id { get; set; }
+
+        /// <summary>
         /// Gets or sets manufacturer's name.
         /// </summary>
-        [XmlAttribute("Manufacturer")]
+        [XmlElement("Manufacturer")]
         public required string Name { get; set; }
 
         /// <summary>
         /// Gets list of sold vehicles.
         /// </summary>
+        [XmlArray("Vehicles")]
+        [XmlArrayItem("Vehicle")]
         public VehicleList Vehicles { get; private set; } = [];
 
         /// <inheritdoc/>
