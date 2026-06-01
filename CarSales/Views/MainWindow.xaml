@@ -5,8 +5,88 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CarSales.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Správa prodejů autosalonu" Height="650" Width="900">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <Button Content="Načíst soubor (XML/CSV)" Padding="10,6" Margin="0,0,10,0" Background="#2196F3" Foreground="White" BorderThickness="0"/>
+                <Button Content="Převést CSV na XML" Padding="10,6" Background="#4CAF50" Foreground="White" BorderThickness="0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <TextBlock Text="Hledat:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                <TextBox Width="200" Padding="5" VerticalAlignment="Center" Height="28"/>
+            </StackPanel>
+        </DockPanel>
+
+        <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,15">
+
+            <Border Background="White" CornerRadius="5" Margin="0,0,10,0" Padding="15" BorderBrush="#E0E0E0" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Prodaná vozidla" Foreground="Gray" FontSize="12"/>
+                    <TextBlock Text="{Binding TotalVehiclesCount}" FontSize="22" FontWeight="Bold" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" CornerRadius="5" Margin="0,0,10,0" Padding="15" BorderBrush="#E0E0E0" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Celkový obrat (s DPH)" Foreground="Gray" FontSize="12"/>
+                    <TextBlock Text="{Binding TotalRevenue, StringFormat={}{0:N0} Kč}" FontSize="22" FontWeight="Bold" Foreground="#4CAF50" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White" CornerRadius="5" Padding="15" BorderBrush="#E0E0E0" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Průměrná cena bez DPH" Foreground="Gray" FontSize="12"/>
+                    <TextBlock Text="{Binding AverageNetPrice, StringFormat={}{0:N0} Kč}" FontSize="22" FontWeight="Bold" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DisplayedVehicles}" 
+                  AutoGenerateColumns="False" CanUserAddRows="False" 
+                  Background="White" RowHeight="25" BorderBrush="#E0E0E0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Značka" Binding="{Binding ManufacturerName}" Width="*"/>
+                <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="*"/>
+                <DataGridTextColumn Header="Cena bez DPH" Binding="{Binding NetPrice, StringFormat={}{0:N0} Kč}" Width="*"/>
+                <DataGridTextColumn Header="DPH" Binding="{Binding VatPercent, StringFormat={}{0}%}" Width="60"/>
+                <DataGridTextColumn Header="Cena s DPH" Binding="{Binding GrossPrice, StringFormat={}{0:N0} Kč}" Width="*"/>
+                <DataGridTextColumn Header="Datum prodeje" Binding="{Binding SoldOn, StringFormat=\{0:dd.MM.yyyy\}}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Border Grid.Row="3" Background="#E9ECEF" CornerRadius="5" Margin="0,15,0,0" Padding="15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Nové auto:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,0"/>
+
+                    <TextBlock Text="Značka:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox Width="100" Margin="0,0,15,0" Padding="3"/>
+
+                    <TextBlock Text="Model:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox Width="100" Margin="0,0,15,0" Padding="3"/>
+
+                    <TextBlock Text="Cena bez DPH:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBox Width="90" Margin="0,0,15,0" Padding="3"/>
+                </StackPanel>
+
+                <Button Grid.Column="1" Content="Přidat do evidence" Padding="15,6" Background="#6C757D" Foreground="White" BorderThickness="0" FontWeight="SemiBold"/>
+            </Grid>
+        </Border>
 
     </Grid>
 </Window>
