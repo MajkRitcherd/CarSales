@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Xml.Serialization;
 using CarSales.Models;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace CarSales.Services
 {
@@ -48,13 +51,59 @@ namespace CarSales.Services
         private static string GetFileExtension(string filePath) => Path.GetExtension(filePath).ToLowerInvariant();
 
         /// <summary>
+        /// Converts CSV DTOs to Sales data.
+        /// </summary>
+        /// <param name="csvDtos">DTO rows from CSV file.</param>
+        /// <returns>Sales data.</returns>
+        private SalesData ConvertCsvDTOsToSalesData(List<CsvSalesDataRowDto> csvDtos)
+        {
+            var salesData = new SalesData();
+            foreach (var dto in csvDtos)
+            {
+                if (!salesData.Manufacturers.Select(m => m.Name).Contains(dto.Manufacturer))
+                {
+                    salesData.Manufacturers.Add(new Manufacturer()
+                    {
+                        Id = salesData.Manufacturers.Count + 1,
+                        Name = dto.Manufacturer,
+                    });
+                }
+
+                var manufacturer = salesData.Manufacturers.First(m => m.Name == dto.Manufacturer);
+                manufacturer.Vehicles.Add(new Vehicle()
+                {
+                    Id = manufacturer.Vehicles.Count + 1,
+                    ModelName = dto.Model,
+                    NetPrice = dto.NetPrice,
+                    VatPercent = dto.VatPercent,
+                    SoldOn = dto.SoldOn,
+                });
+            }
+
+            return salesData;
+        }
+
+        /// <summary>
         /// Loads sales data from CSV file.
         /// </summary>
         /// <param name="csvFilePath">Filepath to CSV file with sales data.</param>
         /// <returns>Sales data.</returns>
         private SalesData LoadSalesDataFromCsv(string csvFilePath)
         {
-            throw new NotImplementedException();
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                Delimiter = ",",
+                PrepareHeaderForMatch = args => args.Header.ToLower().Trim(),
+            };
+
+            List<CsvSalesDataRowDto> list;
+            using (var reader = new StreamReader(csvFilePath))
+            using (var csv = new CsvReader(reader, config))
+            {
+                list = [.. csv.GetRecords<CsvSalesDataRowDto>()];
+            }
+
+            return ConvertCsvDTOsToSalesData(list);
         }
 
         /// <summary>
@@ -95,6 +144,19 @@ namespace CarSales.Services
             // Check file existance
             if (!File.Exists(xmlOrCsvFilePath))
                 throw new FileNotFoundException($"File was not found. Path to file: '{xmlOrCsvFilePath}'");
+        }
+
+        /// <summary>
+        /// Represents one row of sales data in the CSV file. <br />
+        /// Data Transfer Object used exclusively for CSV serialization/deserialization.
+        /// </summary>
+        private sealed class CsvSalesDataRowDto
+        {
+            public string Manufacturer { get; set; } = string.Empty;
+            public string Model { get; set; } = string.Empty;
+            public double NetPrice { get; set; }
+            public DateTime? SoldOn { get; set; }
+            public double VatPercent { get; set; }
         }
     }
 }
