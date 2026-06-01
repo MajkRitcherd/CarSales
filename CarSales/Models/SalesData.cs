@@ -8,7 +8,7 @@ namespace CarSales.Models
     /// Data Transfer Object used exclusively for XML serialization/deserialization.
     /// </summary>
     [XmlRoot("SalesData")]
-    internal class SalesData
+    public class SalesData
     {
         /// <summary>
         /// Gets collection of manufacturers.

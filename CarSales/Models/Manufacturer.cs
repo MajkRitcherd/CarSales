@@ -6,7 +6,7 @@ namespace CarSales.Models
     /// Represents Car manufacturer with a list of sold vehicles. <br />
     /// Data Transfer Object used exclusively for XML serialization/deserialization.
     /// </summary>
-    internal class Manufacturer
+    public class Manufacturer
     {
         /// <summary>
         /// Gets or sets manufacturer's ID.
@@ -17,7 +17,7 @@ namespace CarSales.Models
         /// <summary>
         /// Gets or sets manufacturer's name.
         /// </summary>
-        [XmlElement("Manufacturer")]
+        [XmlElement("Name")]
         public required string Name { get; set; }
 
         /// <summary>

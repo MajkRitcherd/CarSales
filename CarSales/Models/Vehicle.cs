@@ -6,7 +6,7 @@ namespace CarSales.Models
     /// Represents one single vehicle with basic properties like model name, net price, VAT, ... <br />
     /// Data Transfer Object used exclusively for XML serialization/deserialization.
     /// </summary>
-    internal class Vehicle
+    public class Vehicle
     {
         private const string _NOT_SOLD = "NOT SOLD";
 
@@ -51,7 +51,7 @@ namespace CarSales.Models
             return $"Vehicle model '{ModelName}', " +
                 $"Net price '{NetPrice}', " +
                 $"VAT '{VatPercent}', " +
-                $"Date of Sale '{(SoldOn.HasValue ? SoldOn.Value : _NOT_SOLD)}'";
+                $"Sold on '{(SoldOn.HasValue ? SoldOn.Value : _NOT_SOLD)}'";
         }
     }
 }
