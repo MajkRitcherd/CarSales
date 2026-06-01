@@ -13,12 +13,17 @@ namespace CarSales.Models
         /// <summary>
         /// Gets or sets a date of sale (Can be NULL indicating that the vehicle was not yet sold).
         /// </summary>
-        public DateTime? DateOfSale { get; set; }
+        public DateTime? SoldOn { get; set; }
 
         /// <summary>
         /// Gets Gross price (Price including VAT).
         /// </summary>
-        public double GrossPrice => NetPrice * (1 + (VAT / 100));
+        public double GrossPrice => NetPrice * (1 + (VatPercent / 100));
+
+        /// <summary>
+        /// Gets or sets ID of a vehicle.
+        /// </summary>
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of vehicle model.
@@ -34,15 +39,15 @@ namespace CarSales.Models
         /// <summary>
         /// Gets or sets VAT.
         /// </summary>
-        public required double VAT { get; set; }
+        public required double VatPercent { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
         {
             return $"Vehicle model '{ModelName}', " +
                 $"Net price '{NetPrice}', " +
-                $"VAT '{VAT}', " +
-                $"Date of Sale '{(DateOfSale.HasValue ? DateOfSale.Value : _NOT_SOLD)}'";
+                $"VAT '{VatPercent}', " +
+                $"Date of Sale '{(SoldOn.HasValue ? SoldOn.Value : _NOT_SOLD)}'";
         }
     }
 }

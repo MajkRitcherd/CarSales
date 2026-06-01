@@ -1,4 +1,4 @@
-Manufacturer,Model,DateOfSale,NetPrice,VAT
+Manufacturer,Model,SoldOn,NetPrice,VatPercent
 Škoda,Oktávia,2010-12-02,500000,20
 Škoda,Felicia,2000-12-03,210000,20
 Škoda,Fabia,2010-12-04,350000,20
