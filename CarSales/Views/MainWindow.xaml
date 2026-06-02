@@ -16,23 +16,26 @@
 
         <DockPanel Grid.Row="0" LastChildFill="True" Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                <Button Content="Načíst soubor (XML/CSV)" Padding="10,6" Margin="0,0,10,0" Background="#2196F3" Foreground="White" BorderThickness="0" Click="BtnClick_LoadSalesData"/>
-                <Button Content="Uložit jako (XML/CSV) 💾" Padding="10,6" Background="#009688" Foreground="White" BorderThickness="0" Click="BtnClick_SaveSalesData"/>
+                <Button Content="Načíst soubor (XML/CSV)" Padding="10,6" Margin="0,0,10,0" Background="#2196F3" Foreground="White" BorderThickness="0" 
+                        Command="{Binding LoadSalesDataCommand}"/>
+                <Button Content="Uložit jako (XML/CSV) 💾" Padding="10,6" Background="#009688" Foreground="White" BorderThickness="0" 
+                        Command="{Binding SaveSalesDataCommand}"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="15,0,0,0">
                 <TextBlock Text="Hledat:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
-                <TextBox x:Name="TxtSearch" Width="200" Padding="5" VerticalAlignment="Center" Height="28" TextChanged="TxtSearch_TextChanged"/>
+                <TextBox Width="200" Padding="5" VerticalAlignment="Center" Height="28" 
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
 
             <TextBlock Text="{Binding OpenedFilePath, StringFormat={}Otevřený soubor: {0}}" 
-           VerticalAlignment="Center" 
-           HorizontalAlignment="Left"
-           Foreground="Gray" 
-           FontStyle="Italic"
-           Margin="10,0"
-           TextTrimming="CharacterEllipsis"
-           ToolTip="{Binding OpenedFilePath}"/>
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Left"
+                       Foreground="Gray" 
+                       FontStyle="Italic"
+                       Margin="10,0"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding OpenedFilePath}"/>
         </DockPanel>
 
         <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,15">
@@ -59,12 +62,12 @@
         </UniformGrid>
 
         <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0,1,0,0" BorderBrush="#E0E0E0"
-        x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+                    SelectedIndex="{Binding SelectedTabIndex}">
 
             <TabItem Header="Všechna vozidla" Padding="15,6" FontWeight="SemiBold">
                 <DataGrid ItemsSource="{Binding VehicleRowViewModels}" 
-          AutoGenerateColumns="False" CanUserAddRows="False" 
-          Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
+                          AutoGenerateColumns="False" CanUserAddRows="False" 
+                          Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Značka" Binding="{Binding ManufacturerName}" Width="*"/>
                         <DataGridTextColumn Header="Model" Binding="{Binding Vehicle.ModelName}" Width="*"/>
@@ -78,14 +81,12 @@
 
             <TabItem Header="Víkendové prodeje 📅" Padding="15,6" FontWeight="SemiBold">
                 <DataGrid ItemsSource="{Binding WeekendVehicleRowSummaryViewModels}" 
-          AutoGenerateColumns="False" CanUserAddRows="False" 
-          Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
+                          AutoGenerateColumns="False" CanUserAddRows="False" 
+                          Background="White" RowHeight="25" BorderBrush="#E0E0E0" Margin="0,10,0,0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Značka" Binding="{Binding VehicleManufacturerName}" Width="*"/>
                         <DataGridTextColumn Header="Model" Binding="{Binding VehicleModelName}" Width="*"/>
-
                         <DataGridTextColumn Header="Prodaných kusů o víkendu" Binding="{Binding TotalVehiclesSold}" Width="180" FontWeight="SemiBold"/>
-
                         <DataGridTextColumn Header="Celkem bez DPH" Binding="{Binding TotalNetPrice, StringFormat={}{0:N2} Kč}" Width="*"/>
                         <DataGridTextColumn Header="Celkem s DPH" Binding="{Binding TotalGrossPrice, StringFormat={}{0:N2} Kč}" Width="*"/>
                     </DataGrid.Columns>
@@ -98,7 +99,7 @@
             <Border.Style>
                 <Style TargetType="Border">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=MainTabControl, Path=SelectedIndex}" Value="1">
+                        <DataTrigger Binding="{Binding SelectedTabIndex}" Value="1">
                             <Setter Property="IsEnabled" Value="False"/>
                             <Setter Property="Opacity" Value="0.5"/>
                         </DataTrigger>
@@ -116,22 +117,28 @@
                     <TextBlock Text="Nové auto:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,5"/>
 
                     <TextBlock Text="Značka:" VerticalAlignment="Center" Margin="0,0,5,5"/>
-                    <TextBox x:Name="TxtNewManufacturer" Width="100" Margin="0,0,15,5" Padding="3"/>
+                    <TextBox Width="100" Margin="0,0,15,5" Padding="3" 
+                             Text="{Binding NewManufacturer, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Model:" VerticalAlignment="Center" Margin="0,0,5,5"/>
-                    <TextBox x:Name="TxtNewModel" Width="100" Margin="0,0,15,5" Padding="3"/>
+                    <TextBox Width="100" Margin="0,0,15,5" Padding="3" 
+                             Text="{Binding NewModel, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Cena bez DPH:" VerticalAlignment="Center" Margin="0,0,5,5"/>
-                    <TextBox x:Name="TxtNewNetPrice" Width="90" Margin="0,0,15,5" Padding="3" PreviewTextInput="TxtNumeric_PreviewTextInput" DataObject.Pasting="Txtnumeric_Pasting"/>
+                    <TextBox Width="90" Margin="0,0,15,5" Padding="3" PreviewTextInput="TxtNumeric_PreviewTextInput" DataObject.Pasting="Txtnumeric_Pasting" 
+                             Text="{Binding NewNetPrice, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="DPH (%):" VerticalAlignment="Center" Margin="0,0,5,5"/>
-                    <TextBox x:Name="TxtNewVatPercent" Width="50" Margin="0,0,15,5" Padding="3"  PreviewTextInput="TxtNumeric_PreviewTextInput" DataObject.Pasting="Txtnumeric_Pasting"/>
+                    <TextBox Width="50" Margin="0,0,15,5" Padding="3" PreviewTextInput="TxtNumeric_PreviewTextInput" DataObject.Pasting="Txtnumeric_Pasting" 
+                             Text="{Binding NewVatPercent, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Datum prodeje:" VerticalAlignment="Center" Margin="0,0,5,5"/>
-                    <DatePicker x:Name="DpNewSoldOn" Width="110" Margin="0,0,15,5" Padding="1"/>
+                    <DatePicker Width="110" Margin="0,0,15,5" Padding="1" 
+                                SelectedDate="{Binding NewSoldOn, UpdateSourceTrigger=PropertyChanged}"/>
                 </WrapPanel>
 
-                <Button Grid.Column="1" Content="Přidat do evidence" Padding="15,6" Background="#6C757D" Foreground="White" BorderThickness="0" FontWeight="SemiBold" Click="BtnClick_AddVehicleRecord"/>
+                <Button Grid.Column="1" Content="Přidat do evidence" Padding="15,6" Background="#6C757D" Foreground="White" BorderThickness="0" FontWeight="SemiBold" 
+                        Command="{Binding AddVehicleRecordCommand}"/>
             </Grid>
         </Border>
     </Grid>
