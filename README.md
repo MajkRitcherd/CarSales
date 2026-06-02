@@ -75,7 +75,7 @@ CarSales/
     <Name>Škoda</Name>
     <Vehicles>
       <Vehicle>
-        <Model>Octavia</Model>
+        <Model>Oktávia</Model>
         <NetPrice>500000</NetPrice>
         <VatPercent>21</VatPercent>
         <SoldOn>2026-06-01</SoldOn>
@@ -88,7 +88,7 @@ CarSales/
 ### CSV formát
 ```
 Značka,Model,Cena bez DPH,DPH,Cena s DPH,Datum prodeje
-Škoda,Octavia,500000,21,605000,2026-06-01
+Škoda,Oktávia,500000,21,605000,2026-06-01
 ```
 
 ## 📝 Poznámky
